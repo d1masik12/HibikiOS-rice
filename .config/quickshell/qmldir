@@ -1,0 +1,7 @@
+singleton HibikiState 1.0 HibikiState.qml
+GlassIsland 1.0 GlassIsland.qml
+ControlCenter 1.0 ControlCenter.qml
+CavaVisualizer 1.0 CavaVisualizer.qml
+NotificationCenter 1.0 NotificationCenter.qml
+OneUiPlayer 1.0 OneUiPlayer.qml
+BarPopovers 1.0 BarPopovers.qml
