@@ -5,3 +5,7 @@ CavaVisualizer 1.0 CavaVisualizer.qml
 NotificationCenter 1.0 NotificationCenter.qml
 OneUiPlayer 1.0 OneUiPlayer.qml
 BarPopovers 1.0 BarPopovers.qml
+SettingsWindow 1.0 SettingsWindow.qml
+SettingsTabNet 1.0 SettingsTabNet.qml
+SettingsTabLook 1.0 SettingsTabLook.qml
+AppLauncher 1.0 AppLauncher.qml

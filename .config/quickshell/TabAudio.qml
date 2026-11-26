@@ -62,7 +62,7 @@ Item {
         visible: opacity > 0.01
 
         Rectangle {
-            Layout.fillWidth: true; height: 114; radius: 16; color: "#14ffffff"; border.width: 1; border.color: "#26ffffff"
+            Layout.fillWidth: true; height: 114; radius: 16; color: HibikiState.cardColor; border.width: HibikiState.uiTheme === "m3" ? 0 : 1; border.color: "#26ffffff"
             ColumnLayout {
                 anchors.fill: parent; anchors.margins: 12; spacing: 10
                 RowLayout {
@@ -70,7 +70,7 @@ Item {
                     Rectangle {
                         width: 34; height: 34; radius: 11
                         color: HibikiState.stats.muted ? "#38ff5c7c" : "#26a6e3e9"
-                        border.width: 1; border.color: HibikiState.stats.muted ? "#77ff5c7c" : "#55a6e3e9"
+                        border.width: HibikiState.uiTheme === "m3" ? 0 : 1; border.color: HibikiState.stats.muted ? "#77ff5c7c" : "#55a6e3e9"
                         Text { anchors.centerIn: parent; text: HibikiState.stats.muted ? "🔇" : "🔊"; font.pixelSize: 15 }
                         MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: HibikiState.runCmd(["pactl", "set-sink-mute", "@DEFAULT_SINK@", "toggle"]) }
                     }
@@ -78,13 +78,13 @@ Item {
                         Layout.fillWidth: true; spacing: 4
                         RowLayout {
                             Text { text: "Общая громкость"; color: "#f2f6fa"; font.pixelSize: 13; font.bold: true; Layout.fillWidth: true }
-                            Text { text: root.localVol + "%"; color: "#a6e3e9"; font.pixelSize: 13; font.bold: true }
+                            Text { text: root.localVol + "%"; color: HibikiState.accentColor; font.pixelSize: 13; font.bold: true }
                         }
                         Item {
                             Layout.fillWidth: true; height: 18
                             Rectangle {
                                 anchors.verticalCenter: parent.verticalCenter; width: parent.width; height: 8; radius: 4; color: "#22ffffff"
-                                Rectangle { width: parent.width * Math.min(1.0, Math.max(0.0, root.localVol / 100.0)); height: parent.height; radius: 4; color: HibikiState.stats.muted ? "#ff6b8b" : "#a6e3e9" }
+                                Rectangle { width: parent.width * Math.min(1.0, Math.max(0.0, root.localVol / 100.0)); height: parent.height; radius: 4; color: HibikiState.stats.muted ? "#ff6b8b" : HibikiState.accentColor }
                             }
                             MouseArea {
                                 anchors.fill: parent; cursorShape: Qt.PointingHandCursor
@@ -101,7 +101,7 @@ Item {
                     Rectangle {
                         width: 34; height: 34; radius: 11
                         color: HibikiState.stats.micMuted ? "#38ff5c7c" : "#26a6e3e9"
-                        border.width: 1; border.color: HibikiState.stats.micMuted ? "#77ff5c7c" : "#55a6e3e9"
+                        border.width: HibikiState.uiTheme === "m3" ? 0 : 1; border.color: HibikiState.stats.micMuted ? "#77ff5c7c" : "#55a6e3e9"
                         Text { anchors.centerIn: parent; text: "🎙"; font.pixelSize: 15 }
                         MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: HibikiState.runCmd(["pactl", "set-source-mute", "@DEFAULT_SOURCE@", "toggle"]) }
                     }
@@ -109,13 +109,13 @@ Item {
                         Layout.fillWidth: true; spacing: 4
                         RowLayout {
                             Text { text: "Микрофон"; color: "#f2f6fa"; font.pixelSize: 13; font.bold: true; Layout.fillWidth: true }
-                            Text { text: root.localMic + "%"; color: "#a6e3e9"; font.pixelSize: 13; font.bold: true }
+                            Text { text: root.localMic + "%"; color: HibikiState.accentColor; font.pixelSize: 13; font.bold: true }
                         }
                         Item {
                             Layout.fillWidth: true; height: 18
                             Rectangle {
                                 anchors.verticalCenter: parent.verticalCenter; width: parent.width; height: 8; radius: 4; color: "#22ffffff"
-                                Rectangle { width: parent.width * Math.min(1.0, Math.max(0.0, root.localMic / 100.0)); height: parent.height; radius: 4; color: HibikiState.stats.micMuted ? "#ff6b8b" : "#a6e3e9" }
+                                Rectangle { width: parent.width * Math.min(1.0, Math.max(0.0, root.localMic / 100.0)); height: parent.height; radius: 4; color: HibikiState.stats.micMuted ? "#ff6b8b" : HibikiState.accentColor }
                             }
                             MouseArea {
                                 anchors.fill: parent; cursorShape: Qt.PointingHandCursor
@@ -140,7 +140,7 @@ Item {
                 delegate: Rectangle {
                     Layout.fillWidth: true; height: 64; radius: 15
                     color: dMa.containsMouse ? "#24a6e3e9" : "#14ffffff"
-                    border.width: 1; border.color: dMa.containsMouse ? "#66a6e3e9" : "#26ffffff"
+                    border.width: HibikiState.uiTheme === "m3" ? 0 : 1; border.color: dMa.containsMouse ? "#66a6e3e9" : "#26ffffff"
                     scale: dMa.pressed ? 0.97 : 1.0
                     Behavior on color { ColorAnimation { duration: 140 } }
                     Behavior on scale { NumberAnimation { duration: 90 } }
@@ -154,7 +154,7 @@ Item {
                                 text: mode === "sink" ? root.findDesc(root.sinks, root.defaultSink, "По умолчанию") : root.findDesc(root.sources, root.defaultSource, "По умолчанию")
                             }
                         }
-                        Text { text: "›"; color: "#a6e3e9"; font.pixelSize: 20; font.bold: true }
+                        Text { text: "›"; color: HibikiState.accentColor; font.pixelSize: 20; font.bold: true }
                     }
                     MouseArea { id: dMa; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: { devProc.running = true; root.drawerMode = mode } }
                 }
@@ -162,7 +162,7 @@ Item {
         }
 
         Rectangle {
-            Layout.fillWidth: true; height: 84; radius: 16; color: "#14ffffff"; border.width: 1; border.color: "#26ffffff"
+            Layout.fillWidth: true; height: 84; radius: 16; color: HibikiState.cardColor; border.width: HibikiState.uiTheme === "m3" ? 0 : 1; border.color: "#26ffffff"
             ColumnLayout {
                 anchors.fill: parent; anchors.margins: 12; spacing: 8
                 Text { text: "Стиль эквалайзера"; color: "#f2f6fa"; font.pixelSize: 13; font.bold: true }
@@ -179,7 +179,7 @@ Item {
                             Layout.fillWidth: true; height: 34; radius: 10
                             property bool active: HibikiState.cavaStyle === key
                             color: active ? "#38a6e3e9" : (eqMa.containsMouse ? "#1effffff" : "#10ffffff")
-                            border.width: 1; border.color: active ? "#77a6e3e9" : "#22ffffff"
+                            border.width: HibikiState.uiTheme === "m3" ? 0 : 1; border.color: active ? "#77a6e3e9" : "#22ffffff"
                             Text { anchors.centerIn: parent; text: label; color: active ? "#ffffff" : "#9aa8b8"; font.pixelSize: 12; font.bold: active }
                             MouseArea { id: eqMa; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: { HibikiState.cavaStyle = key; HibikiState.saveState() } }
                         }
@@ -193,7 +193,7 @@ Item {
         anchors.fill: parent
         radius: 16
         color: "#16ffffff"
-        border.width: 1
+        border.width: HibikiState.uiTheme === "m3" ? 0 : 1
         border.color: "#55a6e3e9"
         opacity: root.morph
         scale: 0.90 + 0.10 * root.morph
@@ -208,7 +208,7 @@ Item {
                     text: root.drawerMode === "sink" ? "Выбор устройства вывода" : "Выбор микрофона (ввода)"
                 }
                 Rectangle {
-                    width: 30; height: 30; radius: 15; color: cMa.containsMouse ? "#33a6e3e9" : "#1effffff"; border.width: 1; border.color: "#44a6e3e9"
+                    width: 30; height: 30; radius: 15; color: cMa.containsMouse ? "#33a6e3e9" : "#1effffff"; border.width: HibikiState.uiTheme === "m3" ? 0 : 1; border.color: "#44a6e3e9"
                     Text { anchors.centerIn: parent; text: "✕"; color: "#e6f2f8"; font.pixelSize: 12 }
                     MouseArea { id: cMa; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.drawerMode = "" }
                 }
@@ -220,7 +220,7 @@ Item {
                     width: parent ? parent.width : 440; height: 44; radius: 12
                     property bool isCur: root.drawerMode === "sink" ? (modelData.name === root.defaultSink) : (modelData.name === root.defaultSource)
                     color: isCur ? "#38a6e3e9" : (itemMa.containsMouse ? "#1effffff" : "#10ffffff")
-                    border.width: 1; border.color: isCur ? "#77a6e3e9" : "#22ffffff"
+                    border.width: HibikiState.uiTheme === "m3" ? 0 : 1; border.color: isCur ? "#77a6e3e9" : "#22ffffff"
                     scale: itemMa.pressed ? 0.98 : 1.0
                     Behavior on scale { NumberAnimation { duration: 90 } }
                     Text {

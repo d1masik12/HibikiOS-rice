@@ -9,7 +9,7 @@ PanelWindow {
     screen: {
         var l = Quickshell.screens
         for (var i = 0; i < l.length; i++) if (l[i].name === "DP-1") return l[i]
-        return l.length > 0 ? l.pop() : null
+        return l.length > 0 ? l[l.length - 1] : null
     }
 
     property string mode: HibikiState.activePopover
@@ -82,7 +82,7 @@ PanelWindow {
         opacity: Math.min(1.0, win.dropAnim * 1.6)
         scale: 0.16 + 0.84 * win.dropAnim
         transformOrigin: Item.Top
-        radius: 22; color: "#ad11161f"; border.width: 1; border.color: "#aaffffff"
+        radius: 22; color: HibikiState.glassColor; border.width: HibikiState.panelBorderWidth; border.color: HibikiState.panelBorderColor
         focus: true
         Keys.onEscapePressed: HibikiState.activePopover = ""
         MouseArea { anchors.fill: parent }
@@ -96,20 +96,20 @@ PanelWindow {
                 Item { Layout.fillWidth: true }
                 Rectangle {
                     Layout.preferredHeight: 28; Layout.preferredWidth: 28; radius: 14
-                    color: rfMa.containsMouse ? "#33ffffff" : "#18ffffff"; border.width: 1; border.color: "#44ffffff"
+                    color: rfMa.containsMouse ? "#33ffffff" : "#18ffffff"; border.width: HibikiState.uiTheme === "m3" ? 0 : 1; border.color: "#44ffffff"
                     Text { anchors.centerIn: parent; text: "↻"; color: "#ffffff"; font.pixelSize: 13 }
                     MouseArea { id: rfMa; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: { win.wifiStatus = "Поиск..."; wifiProc.running = false; wifiProc.running = true } }
                 }
                 Rectangle {
                     Layout.preferredHeight: 28; Layout.preferredWidth: wTgl.implicitWidth + 18; radius: 14
-                    color: win.wifiOn ? "#44dcf2ff" : "#18ffffff"; border.width: 1; border.color: win.wifiOn ? "#aaffffff" : "#44ffffff"
+                    color: win.wifiOn ? "#44dcf2ff" : "#18ffffff"; border.width: HibikiState.uiTheme === "m3" ? 0 : 1; border.color: win.wifiOn ? "#aaffffff" : "#44ffffff"
                     Text { id: wTgl; anchors.centerIn: parent; text: win.wifiOn ? "Вкл" : "Выкл"; color: "#ffffff"; font.pixelSize: 12; font.bold: win.wifiOn }
                     MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { HibikiState.runCmd(["nmcli", "radio", "wifi", win.wifiOn ? "off" : "on"]); win.wifiOn = !win.wifiOn } }
                 }
             }
             Rectangle {
                 Layout.fillWidth: true; Layout.preferredHeight: 40; radius: 12
-                visible: win.askSsid !== ""; color: "#22ffffff"; border.width: 1; border.color: "#88a6e3e9"
+                visible: win.askSsid !== ""; color: "#22ffffff"; border.width: HibikiState.uiTheme === "m3" ? 0 : 1; border.color: "#88a6e3e9"
                 RowLayout {
                     anchors.fill: parent; anchors.leftMargin: 10; anchors.rightMargin: 6; spacing: 6
                     TextInput {
@@ -118,7 +118,7 @@ PanelWindow {
                         Keys.onReturnPressed: connBtnMa.clicked(null)
                     }
                     Rectangle {
-                        Layout.preferredHeight: 28; Layout.preferredWidth: 64; radius: 9; color: "#44a6e3e9"; border.width: 1; border.color: "#88ffffff"
+                        Layout.preferredHeight: 28; Layout.preferredWidth: 64; radius: 9; color: "#44a6e3e9"; border.width: HibikiState.uiTheme === "m3" ? 0 : 1; border.color: "#88ffffff"
                         Text { anchors.centerIn: parent; text: "Войти"; color: "#ffffff"; font.pixelSize: 11; font.bold: true }
                         MouseArea {
                             id: connBtnMa; anchors.fill: parent; cursorShape: Qt.PointingHandCursor
@@ -127,21 +127,21 @@ PanelWindow {
                     }
                 }
             }
-            Text { text: win.wifiStatus; color: "#a6e3e9"; font.pixelSize: 11; visible: win.wifiStatus !== "" }
+            Text { text: win.wifiStatus; color: HibikiState.accentColor; font.pixelSize: 11; visible: win.wifiStatus !== "" }
             Rectangle {
-                Layout.fillWidth: true; Layout.fillHeight: true; radius: 16; color: "#14ffffff"; border.width: 1; border.color: "#38ffffff"
+                Layout.fillWidth: true; Layout.fillHeight: true; radius: 16; color: HibikiState.uiTheme === "m3" ? "transparent" : HibikiState.cardColor; border.width: HibikiState.uiTheme === "m3" ? 0 : 1; border.color: "#38ffffff"
                 Text { anchors.centerIn: parent; visible: !win.wifiOn || win.wifiList.length === 0; text: win.wifiOn ? "Сети не найдены" : "Wi-Fi отключён"; color: "#b8c8d8"; font.pixelSize: 13 }
                 ListView {
                     id: wList; anchors.fill: parent; anchors.margins: 8; spacing: 6; clip: true; visible: win.wifiOn; model: win.wifiList
                     delegate: Rectangle {
                         width: wList.width; height: 40; radius: 12
                         color: modelData.active ? "#3ce6f4ff" : (nMa.containsMouse ? "#24ffffff" : "#14ffffff")
-                        border.width: 1; border.color: modelData.active ? "#99ffffff" : "#26ffffff"
+                        border.width: HibikiState.uiTheme === "m3" ? 0 : 1; border.color: modelData.active ? "#99ffffff" : "#26ffffff"
                         RowLayout {
                             anchors.fill: parent; anchors.leftMargin: 12; anchors.rightMargin: 12; spacing: 8
                             Text { Layout.fillWidth: true; text: modelData.ssid; color: "#ffffff"; font.pixelSize: 13; font.bold: modelData.active; elide: Text.ElideRight }
                             Text { text: modelData.sec ? "🔒" : ""; font.pixelSize: 11 }
-                            Text { text: modelData.sig + "%"; color: "#a6e3e9"; font.pixelSize: 11; font.bold: true }
+                            Text { text: modelData.sig + "%"; color: HibikiState.accentColor; font.pixelSize: 11; font.bold: true }
                         }
                         MouseArea {
                             id: nMa; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
@@ -164,7 +164,7 @@ PanelWindow {
             Text { text: "Быстрый звук"; color: "#ffffff"; font.pixelSize: 16; font.bold: true }
 
             Rectangle {
-                Layout.fillWidth: true; Layout.preferredHeight: 96; radius: 16; color: "#14ffffff"; border.width: 1; border.color: "#38ffffff"
+                Layout.fillWidth: true; Layout.preferredHeight: 96; radius: 16; color: HibikiState.uiTheme === "m3" ? "transparent" : HibikiState.cardColor; border.width: HibikiState.uiTheme === "m3" ? 0 : 1; border.color: "#38ffffff"
                 ColumnLayout {
                     anchors.fill: parent; anchors.margins: 10; spacing: 8
                     RowLayout {
@@ -178,7 +178,7 @@ PanelWindow {
                             Layout.fillWidth: true; height: 18
                             Rectangle {
                                 anchors.verticalCenter: parent.verticalCenter; width: parent.width; height: 8; radius: 4; color: "#26ffffff"
-                                Rectangle { width: parent.width * Math.min(1, Math.max(0, win.localVol / 100)); height: parent.height; radius: 4; color: HibikiState.stats.muted ? "#ff6b8b" : "#f2f9ff" }
+                                Rectangle { width: parent.width * Math.min(1, Math.max(0, win.localVol / 100)); height: parent.height; radius: 4; color: HibikiState.stats.muted ? "#ff6b8b" : HibikiState.sliderFill }
                             }
                             MouseArea {
                                 anchors.fill: parent; cursorShape: Qt.PointingHandCursor
@@ -201,7 +201,7 @@ PanelWindow {
                             Layout.fillWidth: true; height: 18
                             Rectangle {
                                 anchors.verticalCenter: parent.verticalCenter; width: parent.width; height: 8; radius: 4; color: "#26ffffff"
-                                Rectangle { width: parent.width * Math.min(1, Math.max(0, win.localMic / 100)); height: parent.height; radius: 4; color: HibikiState.stats.micMuted ? "#ff6b8b" : "#f2f9ff" }
+                                Rectangle { width: parent.width * Math.min(1, Math.max(0, win.localMic / 100)); height: parent.height; radius: 4; color: HibikiState.stats.micMuted ? "#ff6b8b" : HibikiState.sliderFill }
                             }
                             MouseArea {
                                 anchors.fill: parent; cursorShape: Qt.PointingHandCursor
@@ -219,12 +219,12 @@ PanelWindow {
             // Переключатель Вывод / Ввод
             Rectangle {
                 id: audSw
-                Layout.fillWidth: true; Layout.preferredHeight: 34; radius: 12; color: "#16ffffff"; border.width: 1; border.color: "#38ffffff"
+                Layout.fillWidth: true; Layout.preferredHeight: 34; radius: 12; color: HibikiState.uiTheme === "m3" ? "transparent" : "#16ffffff"; border.width: HibikiState.uiTheme === "m3" ? 0 : 1; border.color: "#38ffffff"
                 property real halfW: (width - 6) / 2
                 Rectangle {
                     y: 3; x: win.audioTab === "sink" ? 3 : (3 + audSw.halfW)
                     width: audSw.halfW; height: parent.height - 6; radius: 9
-                    color: "#3ce6f4ff"; border.width: 1; border.color: "#88ffffff"
+                    color: "#3ce6f4ff"; border.width: HibikiState.uiTheme === "m3" ? 0 : 1; border.color: "#88ffffff"
                     Behavior on x { NumberAnimation { duration: 220; easing.type: Easing.OutBack; easing.overshoot: 1.06 } }
                 }
                 Row {
@@ -243,7 +243,7 @@ PanelWindow {
             }
 
             Rectangle {
-                Layout.fillWidth: true; Layout.fillHeight: true; radius: 16; color: "#14ffffff"; border.width: 1; border.color: "#38ffffff"
+                Layout.fillWidth: true; Layout.fillHeight: true; radius: 16; color: HibikiState.uiTheme === "m3" ? "transparent" : HibikiState.cardColor; border.width: HibikiState.uiTheme === "m3" ? 0 : 1; border.color: "#38ffffff"
                 ListView {
                     id: sList; anchors.fill: parent; anchors.margins: 8; spacing: 6; clip: true
                     model: win.audioTab === "sink" ? win.sinks : win.sources
@@ -251,7 +251,7 @@ PanelWindow {
                         width: sList.width; height: 36; radius: 10
                         property bool cur: win.audioTab === "sink" ? (modelData.name === win.defSink) : (modelData.name === win.defSource)
                         color: cur ? "#3ce6f4ff" : (skMa.containsMouse ? "#24ffffff" : "#12ffffff")
-                        border.width: 1; border.color: cur ? "#99ffffff" : "#22ffffff"
+                        border.width: HibikiState.uiTheme === "m3" ? 0 : 1; border.color: cur ? "#99ffffff" : "#22ffffff"
                         Text { anchors.fill: parent; anchors.leftMargin: 10; anchors.rightMargin: 10; verticalAlignment: Text.AlignVCenter; elide: Text.ElideRight; text: modelData.desc; color: "#ffffff"; font.pixelSize: 12; font.bold: cur }
                         MouseArea {
                             id: skMa; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor

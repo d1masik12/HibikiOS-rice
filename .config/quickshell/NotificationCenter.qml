@@ -7,23 +7,26 @@ import Quickshell.Services.Mpris
 
 Scope {
     id: root
-    property var player: Mpris.players.values.length > 0 ? Mpris.players.values.slice().pop() : null
+    property var player: Mpris.players.values.length > 0 ? Mpris.players.values[Mpris.players.values.length - 1] : null
     property var mainScreen: {
         var list = Quickshell.screens
-        for (var i = 0; i < list.length; i++) if (list[i].name === "DP-1") return list[i]
-        return list.length > 0 ? list.pop() : null
+        for (var i = 0; i < list.length; i++) if (list[i].name === HibikiState.notifScreen) return list[i]
+        return list.length > 0 ? list[list.length - 1] : null
     }
 
-    PanelWindow {
+    Variants {
+        model: Quickshell.screens
+        PanelWindow {
         id: drawerWin
-        screen: root.mainScreen
-        visible: HibikiState.notifOpen || slideAnim > 0.01
+        required property var modelData
+        screen: modelData
+        property bool screenMatch: screen && (HibikiState.notifScreen === "all" ? screen.name === HibikiState.activeOutput : screen.name === HibikiState.notifScreen)
+        visible: screenMatch && (HibikiState.notifOpen || slideAnim > 0.01)
         anchors { top: true; bottom: true; left: true; right: true }
-        margins.top: 42
         color: "transparent"
         exclusionMode: ExclusionMode.Ignore
         WlrLayershell.layer: WlrLayer.Overlay
-        WlrLayershell.keyboardFocus: HibikiState.notifOpen ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
+        WlrLayershell.keyboardFocus: (HibikiState.notifOpen && screenMatch) ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
 
         property real slideAnim: HibikiState.notifOpen ? 1.0 : 0.0
         property bool clearingAll: false
@@ -34,10 +37,10 @@ Scope {
             id: sheet
             width: 410
             anchors.top: parent.top; anchors.bottom: parent.bottom
-            anchors.topMargin: 10; anchors.bottomMargin: 14
+            anchors.topMargin: 52; anchors.bottomMargin: 14
             x: parent.width - width - 14 + (1.0 - drawerWin.slideAnim) * (width + 30)
             opacity: Math.min(1.0, drawerWin.slideAnim * 1.4)
-            radius: 24; color: "#ad11161f"; border.width: 1; border.color: "#aaffffff"
+            radius: HibikiState.panelRadius; color: HibikiState.glassColor; border.width: HibikiState.panelBorderWidth; border.color: HibikiState.panelBorderColor
             focus: true
             Keys.onEscapePressed: HibikiState.notifOpen = false
             MouseArea { anchors.fill: parent }
@@ -49,24 +52,24 @@ Scope {
                     Text { text: "Уведомления"; color: "#ffffff"; font.pixelSize: 17; font.bold: true }
                     Item { Layout.fillWidth: true }
                     Rectangle {
-                        Layout.preferredHeight: 32; Layout.preferredWidth: dndRow.implicitWidth + 22; radius: 12
+                        Layout.preferredHeight: 32; Layout.preferredWidth: dndRow.implicitWidth + 22; radius: HibikiState.uiTheme === "m3" ? 8 : 12
                         color: HibikiState.dndEnabled ? "#44dcf2ff" : (dndMa.containsMouse ? "#28ffffff" : "#18ffffff")
-                        border.width: 1; border.color: HibikiState.dndEnabled ? "#aaffffff" : "#44ffffff"
+                        border.width: HibikiState.uiTheme === "m3" ? 0 : 1; border.color: HibikiState.dndEnabled ? "#aaffffff" : "#44ffffff"
                         scale: dndMa.pressed ? 0.93 : 1.0
                         Behavior on color { ColorAnimation { duration: 200 } }
                         Behavior on scale { NumberAnimation { duration: 110 } }
                         Row {
                             id: dndRow; anchors.centerIn: parent; spacing: 6
-                            Rectangle { width: 7; height: 7; radius: 3.5; anchors.verticalCenter: parent.verticalCenter; color: HibikiState.dndEnabled ? "#a6e3e9" : "#66ffffff"; Behavior on color { ColorAnimation { duration: 200 } } }
+                            Rectangle { width: 7; height: 7; radius: 3.5; anchors.verticalCenter: parent.verticalCenter; color: HibikiState.dndEnabled ? HibikiState.accentColor : "#66ffffff"; Behavior on color { ColorAnimation { duration: 200 } } }
                             Text { text: HibikiState.dndEnabled ? "Тихий: вкл" : "Тихий"; color: HibikiState.dndEnabled ? "#ffffff" : "#d0deec"; font.pixelSize: 12; font.bold: HibikiState.dndEnabled }
                         }
                         MouseArea { id: dndMa; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: { HibikiState.dndEnabled = !HibikiState.dndEnabled; HibikiState.saveState() } }
                     }
                     Rectangle {
-                        Layout.preferredHeight: 32; Layout.preferredWidth: clrTxt.implicitWidth + 18; radius: 12
+                        Layout.preferredHeight: 32; Layout.preferredWidth: clrTxt.implicitWidth + 18; radius: HibikiState.uiTheme === "m3" ? 8 : 12
                         visible: HibikiState.notifCount > 0
                         color: clrMa.containsMouse ? "#44ff5c7c" : "#18ffffff"
-                        border.width: 1; border.color: "#66ff5c7c"
+                        border.width: HibikiState.uiTheme === "m3" ? 0 : 1; border.color: "#66ff5c7c"
                         Text { id: clrTxt; anchors.centerIn: parent; text: "Очистить"; color: "#ffb8c6"; font.pixelSize: 12; font.bold: true }
                         MouseArea {
                             id: clrMa; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
@@ -81,7 +84,7 @@ Scope {
                 }
                 OneUiPlayer { Layout.fillWidth: true; Layout.preferredHeight: 116; compact: true; visible: root.player !== null }
                 Rectangle {
-                    Layout.fillWidth: true; Layout.fillHeight: true; radius: 18; color: "#14ffffff"; border.width: 1; border.color: "#38ffffff"
+                    Layout.fillWidth: true; Layout.fillHeight: true; radius: HibikiState.uiTheme === "m3" ? 12 : 18; color: HibikiState.uiTheme === "m3" ? "transparent" : HibikiState.cardColor; border.width: HibikiState.uiTheme === "m3" ? 0 : 1; border.color: "#38ffffff"
                     Text {
                         anchors.centerIn: parent
                         opacity: (HibikiState.notifCount === 0 && !particleTimer.running) ? 1.0 : 0.0
@@ -106,7 +109,7 @@ Scope {
                             Timer { id: singleDieTimer; interval: 270; onTriggered: cardWrap.modelData.dismiss() }
                             Rectangle {
                                 anchors.left: parent.left; anchors.right: parent.right; anchors.top: parent.top
-                                height: cardWrap.baseH; radius: 15; color: "#1cffffff"; border.width: 1; border.color: "#44ffffff"
+                                height: cardWrap.baseH; radius: HibikiState.uiTheme === "m3" ? 10 : 15; color: "#1cffffff"; border.width: HibikiState.uiTheme === "m3" ? 0 : 1; border.color: "#44ffffff"
                                 ColumnLayout {
                                     id: cardCol
                                     anchors.left: parent.left; anchors.right: parent.right; anchors.top: parent.top; anchors.margins: 10; spacing: 5
@@ -158,7 +161,7 @@ Scope {
                         onPaint: {
                             var ctx = getContext("2d"); ctx.clearRect(0, 0, width, height)
                             for (var i = 0; i < pts.length; i++) {
-                                var p = pts[i]; ctx.globalAlpha = Math.max(0, p.life); ctx.fillStyle = p.ice ? "#a6e3e9" : "#ffffff"
+                                var p = pts[i]; ctx.globalAlpha = Math.max(0, p.life); ctx.fillStyle = p.ice ? HibikiState.accentColor : "#ffffff"
                                 ctx.beginPath(); ctx.arc(p.x, p.y, p.sz * p.life, 0, Math.PI * 2); ctx.fill()
                             }
                             ctx.globalAlpha = 1.0
@@ -168,10 +171,15 @@ Scope {
             }
         }
     }
-    PanelWindow {
+    }
+    Variants {
+        model: Quickshell.screens
+        PanelWindow {
         id: popupWin
-        screen: root.mainScreen
-        visible: HibikiState.popupItems.length > 0 && !HibikiState.notifOpen && !HibikiState.dndEnabled
+        required property var modelData
+        screen: modelData
+        property bool screenMatch: HibikiState.notifScreen === "all" || (screen && screen.name === HibikiState.notifScreen)
+        visible: screenMatch && HibikiState.popupItems.length > 0 && !HibikiState.notifOpen && !HibikiState.dndEnabled
         anchors { top: true; right: true }
         margins.top: 50; margins.right: 14
         implicitWidth: 360; implicitHeight: popCol.implicitHeight + 8
@@ -191,14 +199,14 @@ Scope {
                     property real life: 1.0
                     width: popCol.width
                     height: (closing || !shown) ? 0 : (pInner.implicitHeight + 22)
-                    radius: 16; color: "#8218202c"; border.width: 1; border.color: "#99ffffff"
+                    radius: HibikiState.uiTheme === "m3" ? 10 : 16; color: HibikiState.uiTheme === "m3" ? "transparent" : "#8218202c"; border.width: HibikiState.uiTheme === "m3" ? 0 : 1; border.color: "#99ffffff"
                     opacity: (closing || !shown) ? 0.0 : 1.0
                     scale: (closing || !shown) ? 0.88 : 1.0
                     Behavior on height { NumberAnimation { duration: 240; easing.type: Easing.OutCubic } }
                     Behavior on opacity { NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
                     Behavior on scale { NumberAnimation { duration: 240; easing.type: Easing.OutCubic } }
                     onLifeChanged: toastBarCvs.requestPaint()
-                    NumberAnimation on life { from: 1.0; to: 0.0; duration: 4800; running: !popMa.containsMouse && !toastBox.closing; onFinished: { toastBox.closing = true; toastByeTimer.running = true } }
+                    NumberAnimation on life { from: 1.0; to: 0.0; duration: HibikiState.toastTimeout; running: !popMa.containsMouse && !toastBox.closing; onFinished: { toastBox.closing = true; toastByeTimer.running = true } }
                     Timer { id: toastByeTimer; interval: 240; onTriggered: HibikiState.dismissPopup(toastBox.modelData) }
                     Canvas {
                         id: toastBarCvs; anchors.fill: parent
@@ -224,4 +232,5 @@ Scope {
         }
     }
     IpcHandler { target: "notif"; function toggle() { HibikiState.notifOpen = !HibikiState.notifOpen } }
+    }
 }

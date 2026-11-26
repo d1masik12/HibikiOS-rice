@@ -19,7 +19,7 @@ Rectangle {
 
     radius: 20
     color: "#cc141923"
-    border.width: 1
+    border.width: HibikiState.uiTheme === "m3" ? 0 : 1
     border.color: "#88ffffff"
 
     function fmtTime(sec) {
@@ -224,7 +224,7 @@ Rectangle {
                 visible: root.showLyricsBtn
                 height: 26; width: lTxt.implicitWidth + 16; radius: 13
                 color: HibikiState.lyricsEnabled ? "#44e6f4ff" : "#1effffff"
-                border.width: 1; border.color: HibikiState.lyricsEnabled ? "#99ffffff" : "#44ffffff"
+                border.width: HibikiState.uiTheme === "m3" ? 0 : 1; border.color: HibikiState.lyricsEnabled ? "#99ffffff" : "#44ffffff"
                 scale: lyMa.pressed ? 0.92 : 1.0
                 Behavior on color { ColorAnimation { duration: 140 } }
                 Behavior on scale { NumberAnimation { duration: 90 } }

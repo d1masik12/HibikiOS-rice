@@ -16,7 +16,7 @@ GridLayout {
         }
         delegate: Rectangle {
             Layout.fillWidth: true; Layout.fillHeight: true; radius: 16
-            color: "#14ffffff"; border.width: 1; border.color: "#26ffffff"
+            color: HibikiState.cardColor; border.width: HibikiState.uiTheme === "m3" ? 0 : 1; border.color: "#26ffffff"
             property var st: HibikiState.stats || ({})
             property real animPct: kind === "cpu" ? (st.cpu || 0) : kind === "gpu" ? (st.gpu || 0) : kind === "ram" ? (st.ram || 0) : (st.diskPct || 0)
             Behavior on animPct { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
@@ -38,7 +38,7 @@ GridLayout {
                             ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.lineWidth = 8; ctx.strokeStyle = "#22ffffff"; ctx.stroke()
                             if (animPct > 0.5) {
                                 ctx.beginPath(); ctx.arc(cx, cy, r, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * Math.min(100, animPct) / 100.0)
-                                ctx.lineWidth = 8; ctx.lineCap = "round"; ctx.strokeStyle = animPct >= 85 ? "#ff6b8b" : "#a6e3e9"; ctx.stroke()
+                                ctx.lineWidth = 8; ctx.lineCap = "round"; ctx.strokeStyle = animPct >= 85 ? "#ff6b8b" : HibikiState.accentColor; ctx.stroke()
                             }
                         }
                     }

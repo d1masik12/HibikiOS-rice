@@ -167,7 +167,7 @@ ShellRoot {
                                     width: parent.width
                                     height: 6
                                     radius: 3
-                                    color: model.focused ? "#a6e3e9" : (model.active ? "#a0e2eefc" : "#667b8798")
+                                    color: model.focused ? HibikiState.accentColor : (model.active ? "#a0e2eefc" : "#667b8798")
                                     Behavior on color { ColorAnimation { duration: 150 } }
                                 }
                                 MouseArea {
@@ -251,7 +251,7 @@ ShellRoot {
                         id: layoutText
                         anchors.centerIn: parent
                         text: bar.layoutLabel()
-                        color: "#a6e3e9"
+                        color: HibikiState.accentColor
                         font.pixelSize: 11
                         font.weight: Font.DemiBold
                     }
@@ -301,7 +301,7 @@ ShellRoot {
                             id: audioIcon
                             anchors.verticalCenter: parent.verticalCenter
                             text: bar.state.muted ? "󰖁" : ((bar.state.volume || 0) >= 50 ? "󰕾" : "󰖀")
-                            color: bar.state.muted ? "#f38ba8" : "#a6e3e9"
+                            color: bar.state.muted ? "#f38ba8" : HibikiState.accentColor
                             font.family: "Symbols Nerd Font"
                             font.pixelSize: 13
                         }
@@ -366,7 +366,7 @@ ShellRoot {
                         anchors.centerIn: parent
                         spacing: 8
                         Text { text: "CPU " + bar.state.cpu + "%"; color: "#e2eefc"; font.pixelSize: 10 }
-                        Text { text: "GPU " + bar.state.gpu + "%"; color: "#a6e3e9"; font.pixelSize: 10 }
+                        Text { text: "GPU " + bar.state.gpu + "%"; color: HibikiState.accentColor; font.pixelSize: 10 }
                         Text { text: "RAM " + bar.state.ram + "%"; color: "#e2eefc"; font.pixelSize: 10 }
                     }
                     MouseArea {

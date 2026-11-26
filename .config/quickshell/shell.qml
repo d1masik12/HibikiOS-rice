@@ -432,4 +432,6 @@ ShellRoot {
     CavaVisualizer {}
     NotificationCenter {}
     BarPopovers {}
+    SettingsWindow {}
+    AppLauncher {}
 }

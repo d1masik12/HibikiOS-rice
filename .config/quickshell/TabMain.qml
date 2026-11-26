@@ -16,7 +16,7 @@ ColumnLayout {
         stdout: SplitParser { onRead: function(line) { try { var d = JSON.parse(line); root.currentWall = d.cur; root.wallList = d.list } catch (e) {} } }
     }
 
-    OneUiPlayer { Layout.fillWidth: true; Layout.preferredHeight: 122; showLyricsBtn: true }
+    OneUiPlayer { Layout.fillWidth: true; Layout.preferredHeight: 122; showLyricsBtn: false }
     GridLayout {
         Layout.fillWidth: true; columns: 2; rowSpacing: 8; columnSpacing: 10
         Repeater {
@@ -28,8 +28,8 @@ ColumnLayout {
             ]
             delegate: Rectangle {
                 Layout.fillWidth: true; height: 50; radius: 14
-                color: modelData.danger ? "#33ff5c7c" : modelData.active ? "#33a6e3e9" : (tileMouse.containsMouse ? "#1effffff" : "#12ffffff")
-                border.width: 1; border.color: modelData.danger ? "#77ff5c7c" : modelData.active ? "#77a6e3e9" : "#24ffffff"
+                color: HibikiState.uiTheme === "m3" ? (modelData.danger ? HibikiState.tileDangerColor : modelData.active ? HibikiState.tileActiveColor : (tileMouse.containsMouse ? HibikiState.tileHoverColor : HibikiState.tileColor)) : (modelData.danger ? "#33ff5c7c" : modelData.active ? "#33a6e3e9" : (tileMouse.containsMouse ? "#1effffff" : "#12ffffff"))
+                border.width: HibikiState.uiTheme === "m3" ? 0 : 1; border.color: modelData.danger ? "#77ff5c7c" : modelData.active ? "#77a6e3e9" : "#24ffffff"
                 scale: tileMouse.pressed ? 0.96 : (tileMouse.containsMouse ? 1.02 : 1.0)
                 Behavior on scale { NumberAnimation { duration: 110 } }
                 ColumnLayout {
@@ -48,14 +48,14 @@ ColumnLayout {
         }
     }
     Rectangle {
-        Layout.fillWidth: true; Layout.fillHeight: true; radius: 16; color: "#12ffffff"; border.width: 1; border.color: "#24ffffff"
+        Layout.fillWidth: true; Layout.fillHeight: true; radius: 16; color: HibikiState.uiTheme === "m3" ? "transparent" : "#12ffffff"; border.width: HibikiState.uiTheme === "m3" ? 0 : 1; border.color: "#24ffffff"
         ColumnLayout {
             anchors.fill: parent; anchors.margins: 10; spacing: 8
             RowLayout {
                 Layout.fillWidth: true
                 Text { text: "Обои рабочего стола"; color: "#f2f6fa"; font.pixelSize: 13; font.bold: true; Layout.fillWidth: true }
                 Text {
-                    text: "Карусель →"; color: "#a6e3e9"; font.pixelSize: 12; font.bold: true
+                    text: "Карусель →"; color: HibikiState.accentColor; font.pixelSize: 12; font.bold: true
                     MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { HibikiState.controlOpen = false; HibikiState.runCmd([Quickshell.env("HOME") + "/.local/bin/wall-carousel"]) } }
                 }
             }
@@ -99,7 +99,7 @@ ColumnLayout {
                             else { ctx.fillStyle = "#1e2634"; ctx.fillRect(0, 0, width, height) }
                             ctx.restore()
                             ctx.beginPath(); ctx.roundedRect(1, 1, width - 2, height - 2, 12, 12)
-                            ctx.lineWidth = cur ? 2.2 : 1.0; ctx.strokeStyle = cur ? "#a6e3e9" : "#44ffffff"; ctx.stroke()
+                            ctx.lineWidth = cur ? 2.2 : 1.0; ctx.strokeStyle = cur ? HibikiState.accentColor : "#44ffffff"; ctx.stroke()
                         }
                     }
                     MouseArea {

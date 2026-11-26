@@ -3,3 +3,6 @@ __pycache__/
 *.bak
 *.tmp
 .DS_Store
+*.bak*
+*.broken
+stable-m3/

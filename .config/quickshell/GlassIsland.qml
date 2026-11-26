@@ -6,13 +6,15 @@ Rectangle {
     property bool hovered: false
     property bool pressed: false
     property real customRadius: height / 2
-    // Интенсивность инея: 0 — выключен, 1 — полный
     property real frost: 0.6
+    // Совместимость с shell.qml, не используется
+    property var captureScreen: null
+    readonly property bool dimmed: HibikiState.controlOpen || HibikiState.notifOpen || HibikiState.settingsOpen
 
-    radius: customRadius
-    color: hovered ? "#d6142232" : "#cc0e1620"
-    border.width: 1
-    border.color: hovered ? "#70a6e3e9" : "#2cbfe9f5"
+    radius: HibikiState.uiTheme === "m3" ? Math.min(customRadius, 12) : customRadius
+    color: hovered ? Qt.lighter(HibikiState.glassColor, 1.25) : HibikiState.glassColor
+    border.width: HibikiState.panelBorderWidth
+    border.color: hovered ? Qt.alpha(HibikiState.accentColor, 0.55) : HibikiState.panelBorderColor
     antialiasing: true
     scale: pressed ? 0.97 : 1.0
     clip: true
@@ -21,39 +23,26 @@ Rectangle {
     Behavior on border.color { ColorAnimation { duration: 160 } }
     Behavior on scale { NumberAnimation { duration: 90; easing.type: Easing.OutCubic } }
 
-    // Холодный блик сверху
+    // Тонкий верхний блик
     Rectangle {
+        visible: HibikiState.uiTheme === "ice"
+        opacity: 1
+        Behavior on opacity { NumberAnimation { duration: 200 } }
         anchors.fill: parent
         anchors.margins: 1
-        radius: Math.max(0, parent.radius - 1)
+        radius: Math.max(0, root.radius - 1)
         color: "transparent"
         gradient: Gradient {
-            GradientStop { position: 0.0; color: root.hovered ? "#40f0fbff" : "#2aef4ff" }
-            GradientStop { position: 0.42; color: "#0ad8f4ff" }
+            GradientStop { position: 0.0; color: root.hovered ? "#40ffffff" : HibikiState.specularTop }
+            GradientStop { position: 0.42; color: HibikiState.specularMid }
             GradientStop { position: 1.0; color: "#00000000" }
         }
     }
 
-    // Тонкая холодная линия по нижнему краю
-    Rectangle {
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-        anchors.leftMargin: root.radius
-        anchors.rightMargin: root.radius
-        anchors.bottomMargin: 1
-        height: 1
-        gradient: Gradient {
-            orientation: Gradient.Horizontal
-            GradientStop { position: 0.0; color: "#00a6e3e9" }
-            GradientStop { position: 0.5; color: root.hovered ? "#66d8f4ff" : "#33a6e3e9" }
-            GradientStop { position: 1.0; color: "#00a6e3e9" }
-        }
-    }
-
-    // Иней: ветвистые кристаллы от краёв, рисуются один раз на размер
+    // Иней
     Canvas {
         id: frostCanvas
+        visible: HibikiState.uiTheme === "ice"
         anchors.fill: parent
         opacity: root.frost * (root.hovered ? 1.0 : 0.75)
         Behavior on opacity { NumberAnimation { duration: 200 } }
@@ -69,8 +58,7 @@ Rectangle {
             ctx.clearRect(0, 0, w, h)
             if (w <= 0 || h <= 0) return
 
-            // Обрезка по скруглению
-            var r = Math.max(0, Math.min(root.customRadius - 1, w / 2, h / 2))
+            var r = Math.max(0, Math.min(root.radius - 1, w / 2, h / 2))
             ctx.save()
             ctx.beginPath()
             ctx.moveTo(r, 0)
@@ -81,7 +69,6 @@ Rectangle {
             ctx.closePath()
             ctx.clip()
 
-            // Детерминированный генератор, чтобы узор не прыгал при перерисовке
             var seed = 7
             function rnd() {
                 seed = (seed * 16807) % 2147483647
@@ -105,7 +92,6 @@ Rectangle {
             }
 
             var h2 = h * 0.95
-            var w2 = w * 0.6
             branch(0, h, -0.35, h2, 4, 0.55)
             branch(0, h, -1.1, h2 * 0.7, 4, 0.4)
             branch(w, 0, Math.PI - 0.4, h2, 4, 0.5)

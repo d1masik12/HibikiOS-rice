@@ -516,17 +516,19 @@ binds {
     Mod+Shift+P { power-off-monitors; }
 
     // custom
-    Mod+R { spawn "rofi" "-show" "drun"; }
+    Mod+R { spawn "qs" "ipc" "call" "launcher" "toggle"; }
 
 
 
 }
 
 
-spawn-at-startup "/home/hibiki/.local/bin/wallpaper-cava"
+// spawn-at-startup "/home/hibiki/.local/bin/wallpaper-cava"
 
 layer-rule {
     match namespace="^quickshell$"
     geometry-corner-radius 24
     place-within-backdrop false
 }
+
+include "hibiki-generated.kdl"
